@@ -14,23 +14,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type ErrorResponse struct {
-	Err string
-}
-
-type error interface {
-	Error() string
-}
-
 var db = utils.ConnectDB()
-
-func MagaAPI(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("i am here")
-}
-
-func TestAPI(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("API live and kicking"))
-}
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
@@ -40,18 +24,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(resp)
 		return
 	}
-	resp := FindOne(user.Email, user.Password)
+	resp := FindOneUser(user.Name, user.Password)
 	json.NewEncoder(w).Encode(resp)
 }
 
-func FindOne(email, password string) map[string]interface{} {
+func FindOneUser(name, password string) map[string]interface{} {
 	user := &models.User{}
 
-	if err := db.Where("Email = ?", email).First(user).Error; err != nil {
+	if err := db.Where("Name = ?", name).First(user).Error; err != nil {
 		var resp = map[string]interface{}{"status": false, "message": "Email address not found"}
 		return resp
 	}
-	expiresAt := time.Now().Add(time.Minute * 100000).Unix()
+
+	// 3 hours
+	expiresAt := time.Now().Add(time.Minute * 180).Unix()
 
 	errf := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if errf != nil && errf == bcrypt.ErrMismatchedHashAndPassword { //Password does not match!
@@ -77,7 +63,7 @@ func FindOne(email, password string) map[string]interface{} {
 
 	var resp = map[string]interface{}{"status": false, "message": "logged in"}
 	resp["token"] = tokenString //Store the token in the response
-	resp["user"] = user
+	resp["user"] = map[string]interface{}{"id": user.ID, "name": user.Name, "email": user.Email}
 	return resp
 }
 
@@ -110,9 +96,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 //FetchUser function
 func FetchUsers(w http.ResponseWriter, r *http.Request) {
 	var users []models.User
-	db.Preload("auths").Find(&users)
+	db.Select("id, name ,email").Find(&users)
+
+	// preload lets you get child structs easier
+	// db.Preload("Person").Find(&users)
 
 	json.NewEncoder(w).Encode(users)
+
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -138,6 +128,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var id = params["id"]
 	var user models.User
-	db.First(&user, id)
+	db.Preload("Person").Select("id, name ,email").First(&user, id)
 	json.NewEncoder(w).Encode(&user)
 }

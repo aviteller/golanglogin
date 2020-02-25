@@ -16,7 +16,9 @@ type Exception models.Exception
 
 // JwtVerify Middleware function
 func JwtVerify(next http.Handler) http.Handler {
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		var header = r.Header.Get("x-access-token") //Grab the token from the header
 
