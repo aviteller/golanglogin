@@ -46,6 +46,14 @@ func GetEatenMeal(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var id = params["id"]
 	var eatenMeal models.EatenMeal
-	db.Preload("Meal").First(&eatenMeal, id)
-	json.NewEncoder(w).Encode(&eatenMeal)
+	var people []models.Person
+
+	db.Preload("Meal").Preload("MealRatings").First(&eatenMeal, id)
+	db.Where("user_id = ?", eatenMeal.UserID).Find(&people)
+
+	var resp = map[string]interface{}{}
+	resp["eatenMeal"] = &eatenMeal
+	resp["people"] = &people
+	json.NewEncoder(w).Encode(resp)
+
 }

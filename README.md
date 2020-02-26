@@ -1,4 +1,4 @@
-# golang-authentication
+# golang-login
 
 
 To start this app, perform the following step in order

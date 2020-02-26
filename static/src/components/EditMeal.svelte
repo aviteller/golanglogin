@@ -64,7 +64,6 @@
       Calories: newIngredient.Calories
     };
 
-
     fetch(`${config.apiUrl}api/ingredient`, {
       method: "POST",
       headers: {
@@ -111,7 +110,7 @@
   };
 </script>
 
-  <a href="/#/">Back</a>
+<a href="/#/">Back</a>
 {#if mealLoaded}
   <h1>{meal.Name}</h1>
   <h3>{mealTypeToString(meal.Mealtype)}</h3>
@@ -119,7 +118,7 @@
   <h4>Number of Ingredients : {ingredients.length}</h4>
 
   <div class="add-child-from">
-    <label for="name">Ingredient name</label>
+    <label for="nam e">Ingredient name</label>
     <input type="text" name="name" id="name" bind:value={newIngredient.Name} />
     <label for="Calories">Calories</label>
     <input

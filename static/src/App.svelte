@@ -5,6 +5,6 @@
 	let title = "App";
 </script>
 
-<main>
+<main style="width:40%;margin-left:30%;border:1px solid; padding:1rem;">
   <Router {routes} />
 </main>

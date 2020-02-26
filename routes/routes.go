@@ -43,6 +43,11 @@ func Handlers() *mux.Router {
 	s.HandleFunc("/eatenmeal", controllers.CreateEatenMeal).Methods("POST", "OPTIONS")
 	s.HandleFunc("/eatenmeal/{id}", controllers.DeleteEatenMeal).Methods("DELETE", "OPTIONS")
 	s.HandleFunc("/eatenmeal/{id}", controllers.GetEatenMeal).Methods("GET", "OPTIONS")
+	//MealRatings
+	s.HandleFunc("/rating", controllers.CreateMealRating).Methods("POST", "OPTIONS")
+	s.HandleFunc("/rating/{id}", controllers.DeleteMealRating).Methods("DELETE", "OPTIONS")
+	s.HandleFunc("/rating/{id}", controllers.GetMealRating).Methods("GET", "OPTIONS")
+	s.HandleFunc("/rating/{id}", controllers.UpdateMealRating).Methods("PUT", "OPTIONS")
 	//Ingredients
 	s.HandleFunc("/ingredient", controllers.CreateIngredient).Methods("POST", "OPTIONS")
 	s.HandleFunc("/ingredient/{id}", controllers.DeleteIngredient).Methods("DELETE", "OPTIONS")

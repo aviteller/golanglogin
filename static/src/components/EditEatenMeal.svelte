@@ -17,28 +17,6 @@
     token: JSON.parse(c.getCookie("jwt")).token
   };
 
-  const loadChildren = () => {
-    fetch(`${config.apiUrl}api/person/${cookieUser.id}`, {
-      method: "GET",
-      headers: {
-        "x-access-token": cookieUser.token
-      }
-    })
-      .then(res => {
-        if (res.status === 403) {
-          logout();
-        } else {
-          return res.json();
-        }
-      })
-      .then(res => {
-        children = res;
-        loaded = true;
-
-        // userLoaded = true;
-      });
-  };
-
   const loadEatenMeal = () => {
     fetch(`${config.apiUrl}api/eatenmeal/${params.id}`, {
       method: "GET",
@@ -55,12 +33,14 @@
       })
       .then(res => {
         meal = {
-          Name: res.Meal.Name,
-          Mealtype: res.Meal.Mealtype,
-          Date: res.Date,
-          Calories: res.Meal.Calories
+          Name: res.eatenMeal.Meal.Name,
+          Mealtype: res.eatenMeal.Meal.Mealtype,
+          Date: res.eatenMeal.Date,
+          Calories: res.eatenMeal.Meal.Calories
         };
-        loadChildren();
+
+        children = res.people;
+        loaded = true;
       });
   };
 
@@ -93,15 +73,17 @@
       <th>Eaten?</th>
       <th>Rating</th>
     </tr>
- 
-  {#each children as child}
-    <tr>
-      <td>{child.Name}</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-  {/each}
-   </table>
+
+    {#each children as child}
+      <tr>
+        <td>{child.Name}</td>
+        <td>
+          <button>No</button>
+        </td>
+        <td>1</td>
+      </tr>
+    {/each}
+  </table>
 {:else}
   <h1>LOADING</h1>
 {/if}

@@ -32,16 +32,17 @@ type Ingredient struct {
 
 type MealRating struct {
 	gorm.Model
-	EatenMeal int  `json:"EatenMealID"`
-	PersonID  int  `json:"PersonID"`
-	Ate       bool `json:"Ate"`
-	Rating    int  `json:"Rating"`
+	EatenMealID int  `json:"EatenMealID"`
+	PersonID    int  `json:"PersonID"`
+	Ate         bool `json:"Ate"`
+	Rating      int  `json:"Rating"`
 }
 
 type EatenMeal struct {
 	gorm.Model
-	UserID int    `json:"UserID"`
-	MealID int    `json:"MealID"`
-	Date   string `json:"Date"`
-	Meal   Meal
+	UserID      int    `json:"UserID"`
+	MealID      int    `json:"MealID"`
+	Date        string `json:"Date"`
+	MealRatings []MealRating
+	Meal        Meal
 }

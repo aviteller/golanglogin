@@ -4,12 +4,13 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-//User struct declaration
+//Person struct declaration
 type Person struct {
 	gorm.Model
 
-	UserID int    `json:"UserID"`
-	Name   string `json:"Name""`
-	Age    int    `json:"Age"`
-	Gender string `json:"Gender"`
+	UserID      int    `json:"UserID"`
+	Name        string `json:"Name"`
+	Age         int    `json:"Age"`
+	Gender      string `json:"Gender"`
+	MealRatings []MealRating
 }
