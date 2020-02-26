@@ -26,12 +26,26 @@ func Handlers() *mux.Router {
 	s.Use(CommonMiddleware)
 	s.Use(auth.JwtVerify)
 	s.HandleFunc("/user", controllers.FetchUsers).Methods("GET", "OPTIONS")
-	s.HandleFunc("/user/{id}", controllers.GetUser).Methods("GET", "OPTIONS")
+	s.HandleFunc("/user/{id}/{onlyuser}", controllers.GetUser).Methods("GET", "OPTIONS")
 	s.HandleFunc("/user/{id}", controllers.UpdateUser).Methods("PUT", "OPTIONS")
 	s.HandleFunc("/user/{id}", controllers.DeleteUser).Methods("DELETE", "OPTIONS")
 
+	// person routes
 	s.HandleFunc("/person", controllers.CreatePerson).Methods("POST", "OPTIONS")
 	s.HandleFunc("/person/{id}", controllers.DeletePerson).Methods("DELETE", "OPTIONS")
+	s.HandleFunc("/person/{user_id}", controllers.GetPeople).Methods("GET", "OPTIONS")
+
+	//Meals
+	s.HandleFunc("/meal", controllers.CreateMeal).Methods("POST", "OPTIONS")
+	s.HandleFunc("/meal/{id}", controllers.DeleteMeal).Methods("DELETE", "OPTIONS")
+	s.HandleFunc("/meal/{id}", controllers.GetMeal).Methods("GET", "OPTIONS")
+	//EatenMeals
+	s.HandleFunc("/eatenmeal", controllers.CreateEatenMeal).Methods("POST", "OPTIONS")
+	s.HandleFunc("/eatenmeal/{id}", controllers.DeleteEatenMeal).Methods("DELETE", "OPTIONS")
+	s.HandleFunc("/eatenmeal/{id}", controllers.GetEatenMeal).Methods("GET", "OPTIONS")
+	//Ingredients
+	s.HandleFunc("/ingredient", controllers.CreateIngredient).Methods("POST", "OPTIONS")
+	s.HandleFunc("/ingredient/{id}", controllers.DeleteIngredient).Methods("DELETE", "OPTIONS")
 
 	return r
 }

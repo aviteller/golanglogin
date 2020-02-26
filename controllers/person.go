@@ -49,3 +49,13 @@ func GetPerson(w http.ResponseWriter, r *http.Request) {
 	db.First(&person, id)
 	json.NewEncoder(w).Encode(&person)
 }
+
+func GetPeople(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var userID = params["user_id"]
+	var people []models.Person
+
+	db.Where("user_id = ?", userID).Find(&people)
+
+	json.NewEncoder(w).Encode(&people)
+}

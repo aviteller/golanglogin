@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"../models"
 
@@ -32,7 +33,7 @@ func ConnectDB() *gorm.DB {
 	//dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", databaseHost, username, databaseName, password)
 
 	//connect to db URI
-	db, err := gorm.Open("sqlite3", "./meals.db")
+	db, err := gorm.Open("sqlite3", "./"+os.Getenv("sqliteDbName"))
 
 	if err != nil {
 		fmt.Println("error", err)
@@ -44,6 +45,10 @@ func ConnectDB() *gorm.DB {
 	// Migrate the schema
 	db.AutoMigrate(
 		&models.User{},
+		&models.Meal{},
+		&models.EatenMeal{},
+		&models.MealRating{},
+		&models.Ingredient{},
 		&models.Person{})
 
 	fmt.Println("Successfully connected!", db)
