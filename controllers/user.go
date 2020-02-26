@@ -127,15 +127,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var id = params["id"]
-	var onlyuser = params["onlyuser"]
+	// var onlyuser = params["onlyuser"]
 	var user models.User
 
-	if onlyuser == "1" {
+	var eatenMeals []models.EatenMeal
 
-		db.First(&user, id)
-	} else {
+	db.Preload("People").Preload("Meals").Select("id, name ,email").First(&user, id)
+	db.Preload("Meal").Where("user_id = ?", id).Find(&eatenMeals)
 
-		db.Preload("People").Preload("Meals").Preload("EatenMeals").Select("id, name ,email").First(&user, id)
-	}
-	json.NewEncoder(w).Encode(&user)
+	var resp = map[string]interface{}{}
+	resp["user"] = &user
+	resp["eatenMeals"] = &eatenMeals
+
+	json.NewEncoder(w).Encode(resp)
 }

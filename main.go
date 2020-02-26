@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"./routes"
-
 	"github.com/joho/godotenv"
 )
 

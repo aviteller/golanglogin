@@ -9,6 +9,7 @@
 
   let meal = {};
   let children = [];
+  let mealRatings = [];
   let loaded = false;
 
   let cookieUser = {
@@ -38,7 +39,7 @@
           Date: res.eatenMeal.Date,
           Calories: res.eatenMeal.Meal.Calories
         };
-
+        mealRatings = res.eatenMeal.MealRatings;
         children = res.people;
         loaded = true;
       });
@@ -56,6 +57,40 @@
     return mealReturn[0].text;
   };
 
+  const addRating = childID => {
+    let newRating = {
+      EatenMealID: parseInt(params.id),
+      PersonID: childID,
+      Ate: true
+    };
+
+    fetch(`${config.apiUrl}api/rating`, {
+      method: "POST",
+      headers: {
+        "x-access-token": cookieUser.token
+      },
+      body: JSON.stringify(newRating)
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log("res", res);
+      });
+  };
+
+  const deleteRating = id => {
+    fetch(`${config.apiUrl}api/rating/${id}`, {
+      method: "DELETE",
+      headers: {
+        "x-access-token": cookieUser.token
+      }
+    }).then(res => {
+      console.log("res", res);
+    });
+  };
+
+  const updateRating = () => {
+    
+  }
   onMount(() => {
     loadEatenMeal();
   });
@@ -76,11 +111,19 @@
 
     {#each children as child}
       <tr>
-        <td>{child.Name}</td>
-        <td>
-          <button>No</button>
-        </td>
-        <td>1</td>
+        {#if mealRatings.filter(m => child.ID === m.PersonID).length == 0}
+          <td>{child.Name}</td>
+          <td>
+            <button on:click={() => addRating(child.ID)}>No</button>
+          </td>
+          <td>0</td>
+        {:else}
+          <td>{child.Name}</td>
+          <td>
+            <button on:click={() => deleteRating(child.ID)}>Yes</button>
+          </td>
+          <td>1</td>
+        {/if}
       </tr>
     {/each}
   </table>

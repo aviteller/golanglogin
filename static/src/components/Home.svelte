@@ -66,10 +66,10 @@
         }
       })
       .then(res => {
-        user = res;
+        user = res.user;
         children = user.People;
         meals = user.Meals;
-        eatenmeals = user.EatenMeals;
+        eatenmeals = res.eatenMeals;
         makeMealSelect();
 
         userLoaded = true;
@@ -219,12 +219,8 @@
     })
       .then(res => res.json())
       .then(res => {
-        if (res.Value.ID != 0) {
-          let eatenMealToAdd = {
-            Date: res.Value.Date,
-            ID: res.Value.ID,
-            MealID: res.Value.MealID
-          };
+        if (res.ID != 0) {
+          let eatenMealToAdd = res
           eatenmeals = [...eatenmeals, eatenMealToAdd];
         
         }
@@ -329,9 +325,9 @@
     <input type="date" bind:value={newEatenMeal.Date}>
     <button on:click={submitAddEatenMealForm}>Add new eaten meal</button>
     </div>
-    {#if eatenmeals.length > 0}
+    {#if eatenmeals && eatenmeals.length > 0}
       {#each eatenmeals as meal}
-        {meal.ID} - {meal.MealID}- {meal.Date} 
+        {meal.ID} - {meal.Meal.Name} ({mealTypeToString(meal.Meal.Mealtype)})- {meal.Date} 
         <a href={`/#/eatenmeal/${meal.ID}`}>Edit</a>
         <button on:click={() => deleteEatenMeal(meal.ID)}>X</button>
         <br />

@@ -20,7 +20,9 @@ func CreateEatenMeal(w http.ResponseWriter, r *http.Request) {
 	if createdEatenMeal.Error != nil {
 		fmt.Println(errMessage)
 	}
-	json.NewEncoder(w).Encode(createdEatenMeal)
+
+	db.Preload("Meal").Find(&eatenMeal)
+	json.NewEncoder(w).Encode(&eatenMeal)
 }
 
 func UpdateEatenMeal(w http.ResponseWriter, r *http.Request) {
