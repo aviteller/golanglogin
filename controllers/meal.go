@@ -47,5 +47,16 @@ func GetMeal(w http.ResponseWriter, r *http.Request) {
 	var id = params["id"]
 	var meal models.Meal
 	db.Preload("Ingredients").First(&meal, id)
+
+	//i want to get stats for meals
+	// var eatenCount int
+
+	// db.Table("eaten_meals").
+
+	// var resp = map[string]interface{}{}
+	// resp["eatenMeal"] = &eatenMeal
+	// resp["people"] = &people
+	// json.NewEncoder(w).Encode(resp)
+
 	json.NewEncoder(w).Encode(&meal)
 }
