@@ -18,6 +18,8 @@
     token: JSON.parse(c.getCookie("jwt")).token
   };
 
+  let mergedChildrenArray = [];
+
   const loadEatenMeal = () => {
     fetch(`${config.apiUrl}api/eatenmeal/${params.id}`, {
       method: "GET",
@@ -41,6 +43,14 @@
         };
         mealRatings = res.eatenMeal.MealRatings;
         children = res.people;
+        mergedChildrenArray = [];
+
+        for (let i = 0; i < children.length; i++) {
+          mergedChildrenArray.push({
+            ...children[i],
+            ...mealRatings.find(mr => mr.PersonID === children[i].ID)
+          });
+        }
         loaded = true;
       });
   };
@@ -58,6 +68,7 @@
   };
 
   const addRating = childID => {
+    loaded = false;
     let newRating = {
       EatenMealID: parseInt(params.id),
       PersonID: childID,
@@ -73,24 +84,45 @@
     })
       .then(res => res.json())
       .then(res => {
-        console.log("res", res);
+        loadEatenMeal();
       });
   };
 
-  const deleteRating = id => {
-    fetch(`${config.apiUrl}api/rating/${id}`, {
-      method: "DELETE",
+  const toggleRating = (childID, ate) => {
+    loaded = false;
+    let newRating = {
+      Ate: !ate
+    };
+
+    fetch(`${config.apiUrl}api/rating/${childID}`, {
+      method: "PUT",
       headers: {
         "x-access-token": cookieUser.token
-      }
+      },
+      body: JSON.stringify(newRating)
     }).then(res => {
-      console.log("res", res);
+      loadEatenMeal();
     });
   };
 
-  const updateRating = () => {
-    
-  }
+  const updateRating = (e, ratingID) => {
+    let newRating = {
+      Rating: parseInt(e.target.value)
+    };
+
+    if (0 < newRating.Rating && newRating.Rating < 10) {
+      loaded = false;
+      fetch(`${config.apiUrl}api/rating/${ratingID}`, {
+        method: "PUT",
+        headers: {
+          "x-access-token": cookieUser.token
+        },
+        body: JSON.stringify(newRating)
+      }).then(res => {
+        loadEatenMeal();
+      });
+    }
+  };
   onMount(() => {
     loadEatenMeal();
   });
@@ -106,23 +138,35 @@
     <tr>
       <th>Child Name</th>
       <th>Eaten?</th>
-      <th>Rating</th>
+      <th>Rating(0-10)</th>
     </tr>
 
-    {#each children as child}
+    {#each mergedChildrenArray as child}
       <tr>
-        {#if mealRatings.filter(m => child.ID === m.PersonID).length == 0}
+        {#if !child.PersonID}
           <td>{child.Name}</td>
           <td>
-            <button on:click={() => addRating(child.ID)}>No</button>
+            <button on:click={() => addRating(child.ID)}>NO</button>
           </td>
           <td>0</td>
         {:else}
           <td>{child.Name}</td>
           <td>
-            <button on:click={() => deleteRating(child.ID)}>Yes</button>
+            <button on:click={() => toggleRating(child.ID, child.Ate)}>
+              {child.Ate ? 'YES' : 'NO'}
+            </button>
           </td>
-          <td>1</td>
+          <td>
+            {#if child.Ate}
+              <input
+              style="width:90px"
+                type="number"
+                min="0"
+                max="10"
+                bind:value={child.Rating}
+                on:blur={e => updateRating(e, child.ID)} />
+            {:else}0{/if}
+          </td>
         {/if}
       </tr>
     {/each}

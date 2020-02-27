@@ -36,6 +36,8 @@ func UpdateMealRating(w http.ResponseWriter, r *http.Request) {
 func DeleteMealRating(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var id = params["id"]
+
+	fmt.Println(id)
 	var mealRating models.MealRating
 	db.First(&mealRating, id)
 	db.Delete(&mealRating)
