@@ -40,7 +40,15 @@ func DeleteEatenMeal(w http.ResponseWriter, r *http.Request) {
 	var id = params["id"]
 	var eatenMeal models.EatenMeal
 	db.First(&eatenMeal, id)
+
+	// b, err := json.MarshalIndent(mealRatings, "", "  ")
+	// if err != nil {
+	// 	fmt.Println("error:", err)
+	// }
+	// fmt.Print(string(b))
+	db.Where("eaten_meal_id = ?", id).Delete(&[]models.MealRating{})
 	db.Delete(&eatenMeal)
+
 	json.NewEncoder(w).Encode("EatenMeal deleted")
 }
 

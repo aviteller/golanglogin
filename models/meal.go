@@ -36,6 +36,7 @@ type MealRating struct {
 	PersonID    int  `json:"PersonID"`
 	Ate         bool `json:"Ate"`
 	Rating      int  `json:"Rating"`
+	EatenMeal   EatenMeal
 }
 
 type EatenMeal struct {

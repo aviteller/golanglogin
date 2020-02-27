@@ -278,7 +278,7 @@
     </div>
     {#if children.length > 0}
       {#each children as child}
-        {child.Name} {child.Age} {child.Gender}
+        <a href={`/#/person/${child.ID}`}>{child.Name}</a> {child.Age} {child.Gender}
         <button on:click={() => deletePerson(child.ID)}>X</button>
         <br />
       {/each}

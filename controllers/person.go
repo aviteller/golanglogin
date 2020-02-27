@@ -46,7 +46,10 @@ func GetPerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var id = params["id"]
 	var person models.Person
-	db.First(&person, id)
+	// var mealsIds []int
+
+	db.Preload("MealRatings", "Ate = true").Preload("MealRatings.EatenMeal").Preload("MealRatings.EatenMeal.Meal").First(&person, id)
+
 	json.NewEncoder(w).Encode(&person)
 }
 
