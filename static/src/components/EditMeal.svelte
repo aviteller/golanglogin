@@ -14,6 +14,8 @@
     Calories: 0
   };
 
+  let eatenMeals = [];
+
   let cookieUser = {
     id: JSON.parse(c.getCookie("jwt")).id,
     name: JSON.parse(c.getCookie("jwt")).name,
@@ -35,8 +37,9 @@
         }
       })
       .then(res => {
-        meal = res;
+        meal = res.meal;
         ingredients = meal.Ingredients;
+        eatenMeals = res.eatenMeals;
         mealLoaded = true;
       });
   };
@@ -116,9 +119,10 @@
   <h3>{mealTypeToString(meal.Mealtype)}</h3>
   <h4>Total Calories : {meal.Calories}</h4>
   <h4>Number of Ingredients : {ingredients.length}</h4>
+  <h4>Number of Times eaten : {eatenMeals.length}</h4>
 
   <div class="add-child-from">
-    <label for="nam e">Ingredient name</label>
+    <label for="name">Ingredient name</label>
     <input type="text" name="name" id="name" bind:value={newIngredient.Name} />
     <label for="Calories">Calories</label>
     <input
@@ -139,6 +143,14 @@
     {/each}
   {:else}
     <h1>Add ingredient</h1>
+  {/if}
+  <hr>
+  {#if eatenMeals.length > 0}
+  {#each eatenMeals as eMeal}
+    Ate On: {eMeal.Date} <a href={`/#/eatenmeal/${eMeal.ID}`}>Go to Meal</a> <br>
+  {/each}
+  {:else}
+  <h1>No eaten Meals</h1>
   {/if}
 {:else}
   <h1>Loading Meal</h1>

@@ -51,12 +51,14 @@ func GetMeal(w http.ResponseWriter, r *http.Request) {
 	//i want to get stats for meals
 	// var eatenCount int
 
-	// db.Table("eaten_meals").
+	var eatenMeals []models.EatenMeal
 
-	// var resp = map[string]interface{}{}
-	// resp["eatenMeal"] = &eatenMeal
-	// resp["people"] = &people
-	// json.NewEncoder(w).Encode(resp)
+	db.Where("meal_id = ?", id).Find(&eatenMeals)
 
-	json.NewEncoder(w).Encode(&meal)
+	var resp = map[string]interface{}{}
+	resp["eatenMeals"] = &eatenMeals
+	resp["meal"] = &meal
+	json.NewEncoder(w).Encode(resp)
+
+	// json.NewEncoder(w).Encode(&meal)
 }

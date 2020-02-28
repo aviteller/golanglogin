@@ -6,6 +6,13 @@
 
   let userLoaded = false;
   let mode = "";
+  let showAddChildForm = false;
+  let showAddMealForm = false;
+  let showEatenMealForm = false;
+
+  const toggleAddChildForm = () => (showAddChildForm = !showAddChildForm);
+  const toggleAddMealForm = () => (showAddMealForm = !showAddMealForm);
+  const toggleEatenMealForm = () => (showEatenMealForm = !showEatenMealForm);
 
   let c = new Cookies();
 
@@ -28,7 +35,7 @@
 
   let newEatenMeal = {
     MealID: "",
-    Date: new Date().toISOString().split('T')[0]
+    Date: new Date().toISOString().split("T")[0]
   };
 
   let user = {};
@@ -97,7 +104,6 @@
         }
       });
     });
-
   };
 
   const deletePerson = id => {
@@ -133,7 +139,6 @@
     }).then(res => {
       eatenmeals = eatenmeals.filter(eatenmeal => eatenmeal.ID !== id);
       if (eatenmeals.length == 0) eatenmeals = [];
- 
     });
   };
 
@@ -207,7 +212,7 @@
     newEatenMeal = {
       UserID: cookieUser.id,
       MealID: newEatenMeal.MealID,
-      Date: newEatenMeal.Date,
+      Date: newEatenMeal.Date
     };
 
     fetch(`${config.apiUrl}api/eatenmeal`, {
@@ -220,13 +225,12 @@
       .then(res => res.json())
       .then(res => {
         if (res.ID != 0) {
-          let eatenMealToAdd = res
+          let eatenMealToAdd = res;
           eatenmeals = [...eatenmeals, eatenMealToAdd];
-        
         }
         newEatenMeal = {
-    MealID: "",
-    Date: new Date().toISOString().split('T')[0]
+          MealID: "",
+          Date: new Date().toISOString().split("T")[0]
         };
       });
   };
@@ -261,43 +265,48 @@
   <button on:click={toggleMode}>{mode || 'Default'}</button>
 
   {#if mode == 'AddChild'}
-    <h1>Add Child</h1>
-    <div class="add-child-from">
-      <label for="name">child name</label>
-      <input type="text" name="name" id="name" bind:value={newChild.Name} />
-      <label for="Gender">Gender</label>
-      <select id="Gender" bind:value={newChild.Gender}>
-        {#each genderOptions as goption}
-          <option value={goption.id}>{goption.text}</option>
-        {/each}
-      </select>
-      <label for="Age">Age</label>
-      <input type="number" name="Age" id="Age" bind:value={newChild.Age} />
-      <br />
-      <button on:click={submitAddChildForm}>Submit</button>
-    </div>
+    <h1 on:click={toggleAddChildForm}>Add Child</h1>
+    {#if showAddChildForm}
+      <div class="add-child-from">
+        <label for="name">child name</label>
+        <input type="text" name="name" id="name" bind:value={newChild.Name} />
+        <label for="Gender">Gender</label>
+        <select id="Gender" bind:value={newChild.Gender}>
+          {#each genderOptions as goption}
+            <option value={goption.id}>{goption.text}</option>
+          {/each}
+        </select>
+        <label for="Age">Age</label>
+        <input type="number" name="Age" id="Age" bind:value={newChild.Age} />
+        <br />
+        <button on:click={submitAddChildForm}>Submit</button>
+      </div>
+    {/if}
     {#if children.length > 0}
       {#each children as child}
-        <a href={`/#/person/${child.ID}`}>{child.Name}</a> {child.Age} {child.Gender}
+        <a href={`/#/person/${child.ID}`}>{child.Name}</a>
+        {child.Age} {child.Gender}
         <button on:click={() => deletePerson(child.ID)}>X</button>
         <br />
       {/each}
     {/if}
   {:else if mode == 'AddMeal'}
-    <h1>Add Meal</h1>
-    <div class="add-child-from">
-      <label for="name">meal name</label>
-      <input type="text" name="name" id="name" bind:value={newMeal.Name} />
-      <label for="MealType">MealType</label>
-      <select id="MealType" bind:value={newMeal.MealType}>
-        {#each mealTypeOptions as goption}
-          <option value={goption.id}>{goption.text}</option>
-        {/each}
-      </select>
+    <h1 on:click={toggleAddMealForm}>Add Meal</h1>
+    {#if showAddMealForm}
+      <div class="add-child-from">
+        <label for="name">meal name</label>
+        <input type="text" name="name" id="name" bind:value={newMeal.Name} />
+        <label for="MealType">MealType</label>
+        <select id="MealType" bind:value={newMeal.MealType}>
+          {#each mealTypeOptions as goption}
+            <option value={goption.id}>{goption.text}</option>
+          {/each}
+        </select>
 
-      <br />
-      <button on:click={submitAddMealForm}>Submit</button>
-    </div>
+        <br />
+        <button on:click={submitAddMealForm}>Submit</button>
+      </div>
+    {/if}
     {#if meals.length > 0}
       {#each meals as meal}
         {meal.Name} - {meal.Calories} - {mealTypeToString(meal.Mealtype)}
@@ -309,25 +318,27 @@
       <h1>Add meal</h1>
     {/if}
   {:else}
-    <h1>Create meal</h1>
+    <h1 on:click={toggleEatenMealForm}>Create meal</h1>
+    {#if showEatenMealForm}
     <div>
-    
-    <select id="eatenmeal-id" bind:value={newEatenMeal.MealID} >
-    <option value="0">--Please Select Meal--</option>
-      {#each mealsOptGroup as optGroup}
-        <optgroup label={optGroup.name}>
-          {#each optGroup.values as mealOpt}
-            <option value={mealOpt.id}>{mealOpt.text}</option>
-          {/each}
-        </optgroup>
-      {/each}
-    </select>
-    <input type="date" bind:value={newEatenMeal.Date}>
-    <button on:click={submitAddEatenMealForm}>Add new eaten meal</button>
+
+      <select id="eatenmeal-id" bind:value={newEatenMeal.MealID}>
+        <option value="0">--Please Select Meal--</option>
+        {#each mealsOptGroup as optGroup}
+          <optgroup label={optGroup.name}>
+            {#each optGroup.values as mealOpt}
+              <option value={mealOpt.id}>{mealOpt.text}</option>
+            {/each}
+          </optgroup>
+        {/each}
+      </select>
+      <input type="date" bind:value={newEatenMeal.Date} />
+      <button on:click={submitAddEatenMealForm}>Add new eaten meal</button>
     </div>
+    {/if}
     {#if eatenmeals && eatenmeals.length > 0}
       {#each eatenmeals as meal}
-        {meal.ID} - {meal.Meal.Name} ({mealTypeToString(meal.Meal.Mealtype)})- {meal.Date} 
+        {meal.ID} - {meal.Meal.Name} ({mealTypeToString(meal.Meal.Mealtype)})- {meal.Date}
         <a href={`/#/eatenmeal/${meal.ID}`}>Edit</a>
         <button on:click={() => deleteEatenMeal(meal.ID)}>X</button>
         <br />
