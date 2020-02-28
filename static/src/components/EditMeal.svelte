@@ -4,8 +4,9 @@
   import config from "../config";
   import Cookies from "../Cookies";
   import { push } from "svelte-spa-router";
+    import {mealTypeToString,mealTypeOptions, cookieUser} from "../helpers";
 
-  let c = new Cookies();
+
   let mealLoaded = false;
   let meal = {};
   let ingredients = [];
@@ -16,11 +17,7 @@
 
   let eatenMeals = [];
 
-  let cookieUser = {
-    id: JSON.parse(c.getCookie("jwt")).id,
-    name: JSON.parse(c.getCookie("jwt")).name,
-    token: JSON.parse(c.getCookie("jwt")).token
-  };
+
 
   const loadMeal = () => {
     fetch(`${config.apiUrl}api/meal/${params.id}`, {
@@ -44,17 +41,7 @@
       });
   };
 
-  let mealTypeOptions = [
-    { id: 0, text: "Breakfast" },
-    { id: 1, text: "Lunch" },
-    { id: 2, text: "Supper" },
-    { id: 3, text: "Snack" }
-  ];
 
-  const mealTypeToString = mealType => {
-    let mealReturn = mealTypeOptions.filter(meal => meal.id == mealType);
-    return mealReturn[0].text;
-  };
 
   onMount(() => {
     loadMeal();

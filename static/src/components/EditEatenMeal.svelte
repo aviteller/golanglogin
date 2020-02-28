@@ -3,20 +3,13 @@
   import { onMount } from "svelte";
   import config from "../config";
   import Cookies from "../Cookies";
+  import { mealTypeToString, mealTypeOptions, cookieUser } from "../helpers";
   import { push } from "svelte-spa-router";
-
-  let c = new Cookies();
 
   let meal = {};
   let children = [];
   let mealRatings = [];
   let loaded = false;
-
-  let cookieUser = {
-    id: JSON.parse(c.getCookie("jwt")).id,
-    name: JSON.parse(c.getCookie("jwt")).name,
-    token: JSON.parse(c.getCookie("jwt")).token
-  };
 
   let mergedChildrenArray = [];
 
@@ -53,18 +46,6 @@
         }
         loaded = true;
       });
-  };
-
-  let mealTypeOptions = [
-    { id: 0, text: "Breakfast" },
-    { id: 1, text: "Lunch" },
-    { id: 2, text: "Supper" },
-    { id: 3, text: "Snack" }
-  ];
-
-  const mealTypeToString = mealType => {
-    let mealReturn = mealTypeOptions.filter(meal => meal.id == mealType);
-    return mealReturn[0].text;
   };
 
   const addRating = childID => {
@@ -159,7 +140,7 @@
           <td>
             {#if child.Ate}
               <input
-              style="width:90px"
+                style="width:90px"
                 type="number"
                 min="0"
                 max="10"

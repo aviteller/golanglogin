@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 	"time"
 
 	"../models"
@@ -134,6 +135,12 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	db.Preload("People").Preload("Meals").Select("id, name ,email").First(&user, id)
 	db.Preload("Meal").Where("user_id = ?", id).Find(&eatenMeals)
+
+	// sorting eaten meals by mealtype
+
+	sort.Slice(eatenMeals[:], func(i, j int) bool {
+		return eatenMeals[i].Meal.MealType < eatenMeals[j].Meal.MealType
+	})
 
 	var resp = map[string]interface{}{}
 	resp["user"] = &user

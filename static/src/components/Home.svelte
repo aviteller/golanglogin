@@ -2,8 +2,9 @@
   import { onMount } from "svelte";
   import config from "../config";
   import Cookies from "../Cookies";
+  import {mealTypeToString, mealTypeOptions, genderOptions, cookieUser} from "../helpers";
   import { push } from "svelte-spa-router";
-
+  let c = new Cookies();
   let userLoaded = false;
   let mode = "";
   let showAddChildForm = false;
@@ -14,13 +15,6 @@
   const toggleAddMealForm = () => (showAddMealForm = !showAddMealForm);
   const toggleEatenMealForm = () => (showEatenMealForm = !showEatenMealForm);
 
-  let c = new Cookies();
-
-  let cookieUser = {
-    id: JSON.parse(c.getCookie("jwt")).id,
-    name: JSON.parse(c.getCookie("jwt")).name,
-    token: JSON.parse(c.getCookie("jwt")).token
-  };
 
   let newChild = {
     Name: "",
@@ -235,26 +229,7 @@
       });
   };
 
-  let genderOptions = [
-    { id: "Male", text: "Male" },
-    { id: "Female", text: "Female" }
-  ];
-
-  let mealTypeOptions = [
-    { id: 0, text: "Breakfast" },
-    { id: 1, text: "Lunch" },
-    { id: 2, text: "Supper" },
-    { id: 3, text: "Snack" }
-  ];
-
-  const mealTypeToString = mealType => {
-    let mealReturn = mealTypeOptions.filter(meal => meal.id == mealType);
-    return mealReturn[0].text;
-  };
-
-  onMount(() => {
-    loadUser();
-  });
+  onMount(() => loadUser());
 </script>
 
 {#if userLoaded}
@@ -262,7 +237,7 @@
   <h1>Hello {user.Name}</h1>
   <button on:click={logout}>Logout</button>
   <br />
-  <button on:click={toggleMode}>{mode || 'Default'}</button>
+  <button on:click={toggleMode}>Toggle View</button>
 
   {#if mode == 'AddChild'}
     <h1 on:click={toggleAddChildForm}>Add Child</h1>
@@ -318,23 +293,23 @@
       <h1>Add meal</h1>
     {/if}
   {:else}
-    <h1 on:click={toggleEatenMealForm}>Create meal</h1>
+    <h1 on:click={toggleEatenMealForm}>Add eaten meal</h1>
     {#if showEatenMealForm}
-    <div>
+      <div>
 
-      <select id="eatenmeal-id" bind:value={newEatenMeal.MealID}>
-        <option value="0">--Please Select Meal--</option>
-        {#each mealsOptGroup as optGroup}
-          <optgroup label={optGroup.name}>
-            {#each optGroup.values as mealOpt}
-              <option value={mealOpt.id}>{mealOpt.text}</option>
-            {/each}
-          </optgroup>
-        {/each}
-      </select>
-      <input type="date" bind:value={newEatenMeal.Date} />
-      <button on:click={submitAddEatenMealForm}>Add new eaten meal</button>
-    </div>
+        <select id="eatenmeal-id" bind:value={newEatenMeal.MealID}>
+          <option value="0">--Please Select Meal--</option>
+          {#each mealsOptGroup as optGroup}
+            <optgroup label={optGroup.name}>
+              {#each optGroup.values as mealOpt}
+                <option value={mealOpt.id}>{mealOpt.text}</option>
+              {/each}
+            </optgroup>
+          {/each}
+        </select>
+        <input type="date" bind:value={newEatenMeal.Date} />
+        <button on:click={submitAddEatenMealForm}>Add new eaten meal</button>
+      </div>
     {/if}
     {#if eatenmeals && eatenmeals.length > 0}
       {#each eatenmeals as meal}
