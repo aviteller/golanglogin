@@ -53,17 +53,19 @@
   };
 
   const deleteMeal = id => {
-    fetch(`${config.apiUrl}api/meal/${id}`, {
-      method: "DELETE",
-      headers: {
-        "x-access-token": cookieUser.token
-      }
-    }).then(res => {
-      meals = meals.filter(meal => meal.ID !== id);
-      if (meals.length == 0) meals = [];
+    if (window.confirm("Are you sure want to delete")) {
+      fetch(`${config.apiUrl}api/meal/${id}`, {
+        method: "DELETE",
+        headers: {
+          "x-access-token": cookieUser.token
+        }
+      }).then(res => {
+        meals = meals.filter(meal => meal.ID !== id);
+        if (meals.length == 0) meals = [];
 
-      dispatch("updatemeals", meals);
-    });
+        dispatch("updatemeals", meals);
+      });
+    }
   };
 
   let showAddMealForm = false;

@@ -43,16 +43,19 @@
   };
 
   const deleteEatenMeal = id => {
-    fetch(`${config.apiUrl}api/eatenmeal/${id}`, {
-      method: "DELETE",
-      headers: {
-        "x-access-token": cookieUser.token
-      }
-    }).then(res => {
-      eatenmeals = eatenmeals.filter(eatenmeal => eatenmeal.ID !== id);
-      if (eatenmeals.length == 0) eatenmeals = [];
-      dispatch("updateeatenmeals", eatenmeals);
-    });
+    if(window.confirm("Are you sure want to delete")) {
+
+      fetch(`${config.apiUrl}api/eatenmeal/${id}`, {
+        method: "DELETE",
+        headers: {
+          "x-access-token": cookieUser.token
+        }
+      }).then(res => {
+        eatenmeals = eatenmeals.filter(eatenmeal => eatenmeal.ID !== id);
+        if (eatenmeals.length == 0) eatenmeals = [];
+        dispatch("updateeatenmeals", eatenmeals);
+      });
+    }
   };
 
   const submitAddEatenMealForm = () => {

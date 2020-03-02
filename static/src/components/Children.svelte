@@ -23,6 +23,7 @@
   let showAddChildForm = false;
 
   const deletePerson = id => {
+    if (window.confirm("Are you sure want to delete")) {
     fetch(`${config.apiUrl}api/person/${id}`, {
       method: "DELETE",
       headers: {
@@ -33,6 +34,7 @@
       if (children.length == 0) children = [];
       dispatch("updatechildren", children);
     });
+    }
   };
   const submitAddChildForm = () => {
     newChild = {

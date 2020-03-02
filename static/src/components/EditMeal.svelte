@@ -88,21 +88,23 @@
   };
 
   const deleteIngredient = id => {
-    fetch(`${config.apiUrl}api/ingredient/${id}`, {
-      method: "DELETE",
-      headers: {
-        "x-access-token": cookieUser.token
-      }
-    }).then(res => {
-      ingredients = ingredients.filter(ingredient => {
-        if (ingredient.ID === id) {
-          meal.Calories -= ingredient.Calories;
-        } else {
-          return ingredient;
+    if (window.confirm("Are you sure want to delete")) {
+      fetch(`${config.apiUrl}api/ingredient/${id}`, {
+        method: "DELETE",
+        headers: {
+          "x-access-token": cookieUser.token
         }
+      }).then(res => {
+        ingredients = ingredients.filter(ingredient => {
+          if (ingredient.ID === id) {
+            meal.Calories -= ingredient.Calories;
+          } else {
+            return ingredient;
+          }
+        });
+        if (ingredients.length == 0) ingredients = [];
       });
-      if (ingredients.length == 0) ingredients = [];
-    });
+    }
   };
 
   const submitUpdateMealForm = () => {
@@ -143,21 +145,25 @@
   {/if}
   <hr />
   <ToggleIcon on:toggled={toggleEditIngredient} />
-{#if editIngredientMode}
-  <div class="add-child-from">
-    <label for="name">Ingredient name</label>
-    <input type="text" name="name" id="name" bind:value={newIngredient.Name} />
-    <label for="Calories">Calories</label>
-    <input
-      type="number"
-      name="Calories"
-      id="Calories"
-      bind:value={newIngredient.Calories} />
+  {#if editIngredientMode}
+    <div class="add-child-from">
+      <label for="name">Ingredient name</label>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        bind:value={newIngredient.Name} />
+      <label for="Calories">Calories</label>
+      <input
+        type="number"
+        name="Calories"
+        id="Calories"
+        bind:value={newIngredient.Calories} />
 
-    <br />
-    <button on:click={submitAddIngredientForm}>Submit</button>
-  </div>
-{/if}
+      <br />
+      <button on:click={submitAddIngredientForm}>Submit</button>
+    </div>
+  {/if}
   {#if ingredients.length > 0}
     <Table headers={['Name', 'Calories', 'Action']}>
 
@@ -176,20 +182,17 @@
   {/if}
   <hr />
   {#if eatenMeals.length > 0}
-     <Table headers={['Eaten Date', 'Link', 'Average Rating']}>
-    {#each eatenMeals as eMeal}
-     <tr>
-     <td>
-     {convertDateToString(eMeal.Date)}
-     </td>
-     <td>
-     <a href={`/#/eatenmeal/${eMeal.ID}`}>Go to Meal</a>
-     </td>
-     <td>{eMeal.AverageRating.toFixed(2)}</td>
-     </tr>
- 
-    {/each}
-     </Table>
+    <Table headers={['Eaten Date', 'Link', 'Average Rating']}>
+      {#each eatenMeals as eMeal}
+        <tr>
+          <td>{convertDateToString(eMeal.Date)}</td>
+          <td>
+            <a href={`/#/eatenmeal/${eMeal.ID}`}>Go to Meal</a>
+          </td>
+          <td>{eMeal.AverageRating.toFixed(2)}</td>
+        </tr>
+      {/each}
+    </Table>
   {:else}
     <h1>No eaten Meals</h1>
   {/if}
