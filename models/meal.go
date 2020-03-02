@@ -41,9 +41,10 @@ type MealRating struct {
 
 type EatenMeal struct {
 	gorm.Model
-	UserID      int    `json:"UserID"`
-	MealID      int    `json:"MealID"`
-	Date        string `json:"Date"`
-	MealRatings []MealRating
-	Meal        Meal
+	UserID        int     `json:"UserID"`
+	MealID        int     `json:"MealID"`
+	Date          string  `json:"Date"`
+	AverageRating float32 `json:"AverageRating"`
+	MealRatings   []MealRating
+	Meal          Meal
 }

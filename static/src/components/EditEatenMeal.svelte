@@ -5,6 +5,8 @@
   import Cookies from "../Cookies";
   import { mealTypeToString, mealTypeOptions, cookieUser } from "../helpers";
   import { push } from "svelte-spa-router";
+  import ToggleIcon from "../UI/ToggleIcon.svelte";
+  import Table from "../UI/Table.svelte";
 
   let meal = {};
   let children = [];
@@ -91,7 +93,7 @@
       Rating: parseInt(e.target.value)
     };
 
-    if (0 < newRating.Rating && newRating.Rating < 10) {
+    if (0 <= newRating.Rating && newRating.Rating <= 10) {
       loaded = false;
       fetch(`${config.apiUrl}api/rating/${ratingID}`, {
         method: "PUT",
@@ -104,6 +106,31 @@
       });
     }
   };
+
+  const getTotalCalorieCount = mealRatings => {
+    let totalCalories = mealRatings.reduce(
+      (a, c) => a + c.EatenMeal.Meal.Calories,
+      0
+    );
+    return totalCalories;
+  };
+
+  const getAverageRating = mergedChildrenArray => {
+    let totalEaten = 0;
+    let totalRatings = mergedChildrenArray.reduce((a, c) => {
+      if (c.Rating && c.Ate) {
+        totalEaten++;
+        return a + c.Rating;
+      } else {
+        return a;
+      }
+    }, 0);
+
+    let average = totalRatings / totalEaten;
+
+    return average.toFixed(2)
+  };
+
   onMount(() => {
     loadEatenMeal();
   });
@@ -113,29 +140,26 @@
 {#if loaded}
   <h1>{meal.Name} - {mealTypeToString(meal.Mealtype)}</h1>
   <h4>{meal.Date}</h4>
-  <h2>{meal.Calories}</h2>
+  <!-- <h2>{meal.Calories}</h2> -->
+  <h5>Average Rating: {getAverageRating(mergedChildrenArray)}</h5>
 
-  <table border="1">
-    <tr>
-      <th>Child Name</th>
-      <th>Eaten?</th>
-      <th>Rating(0-10)</th>
-    </tr>
+  <Table headers={['Child Name', 'Eaten?', 'Rating(0-10)']}>
 
     {#each mergedChildrenArray as child}
       <tr>
         {#if !child.PersonID}
           <td>{child.Name}</td>
           <td>
-            <button on:click={() => addRating(child.ID)}>NO</button>
+            <ToggleIcon on:toggled={() => addRating(child.ID)} />
+            <!-- <button on:click={() => addRating(child.ID)}>NO</button> -->
           </td>
           <td>0</td>
         {:else}
           <td>{child.Name}</td>
           <td>
-            <button on:click={() => toggleRating(child.ID, child.Ate)}>
-              {child.Ate ? 'YES' : 'NO'}
-            </button>
+            <ToggleIcon
+              on:toggled={() => toggleRating(child.ID, child.Ate)}
+              toggledMode={child.Ate ? true : false} />
           </td>
           <td>
             {#if child.Ate}
@@ -151,7 +175,7 @@
         {/if}
       </tr>
     {/each}
-  </table>
+  </Table>
 {:else}
   <h1>LOADING</h1>
 {/if}

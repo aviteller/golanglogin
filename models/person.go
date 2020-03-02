@@ -10,7 +10,7 @@ type Person struct {
 
 	UserID      int    `json:"UserID"`
 	Name        string `json:"Name"`
-	Age         int    `json:"Age"`
 	Gender      string `json:"Gender"`
+	DateOfBirth string `json:"DateOfBirth"`
 	MealRatings []MealRating
 }

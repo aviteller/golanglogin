@@ -33,6 +33,7 @@ func Handlers() *mux.Router {
 	// person routes
 	s.HandleFunc("/person", controllers.CreatePerson).Methods("POST", "OPTIONS")
 	s.HandleFunc("/person/{id}", controllers.DeletePerson).Methods("DELETE", "OPTIONS")
+	s.HandleFunc("/person/{id}", controllers.UpdatePerson).Methods("PUT", "OPTIONS")
 	// s.HandleFunc("/person/{user_id}", controllers.GetPeople).Methods("GET", "OPTIONS")
 	s.HandleFunc("/person/{id}", controllers.GetPerson).Methods("GET", "OPTIONS")
 
@@ -40,6 +41,7 @@ func Handlers() *mux.Router {
 	s.HandleFunc("/meal", controllers.CreateMeal).Methods("POST", "OPTIONS")
 	s.HandleFunc("/meal/{id}", controllers.DeleteMeal).Methods("DELETE", "OPTIONS")
 	s.HandleFunc("/meal/{id}", controllers.GetMeal).Methods("GET", "OPTIONS")
+	s.HandleFunc("/meal/{id}", controllers.UpdateMeal).Methods("PUT", "OPTIONS")
 	//EatenMeals
 	s.HandleFunc("/eatenmeal", controllers.CreateEatenMeal).Methods("POST", "OPTIONS")
 	s.HandleFunc("/eatenmeal/{id}", controllers.DeleteEatenMeal).Methods("DELETE", "OPTIONS")

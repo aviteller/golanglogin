@@ -67,3 +67,23 @@ func GetEatenMeal(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 
 }
+
+func UpdateEatenMealAverageRating(id int) {
+	var eatenMeal models.EatenMeal
+	var mealRatings []models.MealRating
+
+	db.Where("id = ?", id).Find(&eatenMeal)
+	db.Where("eaten_meal_id = ? AND Ate = 1", id).Find(&mealRatings)
+
+	var averageTotal float32 = 0
+	var total int = 0
+
+	for _, meal := range mealRatings {
+		total += meal.Rating
+	}
+
+	averageTotal = (float32(total) / float32(len(mealRatings)))
+
+	eatenMeal.AverageRating = averageTotal
+	db.Save(&eatenMeal)
+}

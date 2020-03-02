@@ -5,6 +5,7 @@ import Register from "./components/Register.svelte";
 import EditMeal from "./components/EditMeal.svelte";
 import EditEatenMeal from "./components/EditEatenMeal.svelte";
 import EditPerson from "./components/EditPerson.svelte";
+import NotFound from "./components/NotFound.svelte";
 
 let c = new Cookies();
 
@@ -22,11 +23,13 @@ const urlParams = new URLSearchParams(window.location.search);
 if (!urlParams.has("routemap")) {
   routes = {
     "/": userLoggedIn() ? Home : Login,
+    "/home/:mode?": userLoggedIn() ? Home : Login,
     "/login": Login,
     "/register": Register,
     "/meal/:id": userLoggedIn() ? EditMeal : Login,
     "/eatenmeal/:id": userLoggedIn() ? EditEatenMeal : Login,
-    "/person/:id": userLoggedIn() ? EditPerson : Login
+    "/person/:id": userLoggedIn() ? EditPerson : Login,
+    '*': NotFound,
   };
 }
 

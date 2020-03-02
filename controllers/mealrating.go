@@ -30,6 +30,9 @@ func UpdateMealRating(w http.ResponseWriter, r *http.Request) {
 	db.First(&mealRating, id)
 	json.NewDecoder(r.Body).Decode(mealRating)
 	db.Save(&mealRating)
+
+	UpdateEatenMealAverageRating(mealRating.EatenMealID)
+
 	json.NewEncoder(w).Encode(&mealRating)
 }
 
@@ -37,9 +40,9 @@ func DeleteMealRating(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var id = params["id"]
 
-	fmt.Println(id)
 	var mealRating models.MealRating
 	db.First(&mealRating, id)
+	UpdateEatenMealAverageRating(mealRating.EatenMealID)
 	db.Delete(&mealRating)
 	json.NewEncoder(w).Encode("MealRating deleted")
 }

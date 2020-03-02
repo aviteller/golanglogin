@@ -4,20 +4,28 @@
   import config from "../config";
   import Cookies from "../Cookies";
   import { push } from "svelte-spa-router";
-    import {mealTypeToString,mealTypeOptions, cookieUser} from "../helpers";
-
+  import {
+    mealTypeToString,
+    mealTypeOptions,
+    cookieUser,
+    convertDateToString
+  } from "../helpers";
+  import ToggleIcon from "../UI/ToggleIcon.svelte";
+  import Table from "../UI/Table.svelte";
 
   let mealLoaded = false;
   let meal = {};
   let ingredients = [];
+  let editMode = false;
+  let editIngredientMode = false;
   let newIngredient = {
     Name: "",
     Calories: 0
   };
 
   let eatenMeals = [];
-
-
+  const toggleEdit = () => (editMode = !editMode);
+  const toggleEditIngredient = () => (editIngredientMode = !editIngredientMode);
 
   const loadMeal = () => {
     fetch(`${config.apiUrl}api/meal/${params.id}`, {
@@ -40,8 +48,6 @@
         mealLoaded = true;
       });
   };
-
-
 
   onMount(() => {
     loadMeal();
@@ -98,16 +104,46 @@
       if (ingredients.length == 0) ingredients = [];
     });
   };
+
+  const submitUpdateMealForm = () => {
+    fetch(`${config.apiUrl}api/meal/${params.id}`, {
+      method: "PUT",
+      headers: {
+        "x-access-token": cookieUser.token
+      },
+      body: JSON.stringify(meal)
+    }).then(res => toggleEdit());
+  };
 </script>
 
-<a href="/#/">Back</a>
+<a href="/#/home/AddMeal">Back</a>
 {#if mealLoaded}
-  <h1>{meal.Name}</h1>
-  <h3>{mealTypeToString(meal.Mealtype)}</h3>
-  <h4>Total Calories : {meal.Calories}</h4>
-  <h4>Number of Ingredients : {ingredients.length}</h4>
-  <h4>Number of Times eaten : {eatenMeals.length}</h4>
+  <ToggleIcon on:toggled={toggleEdit} />
 
+  {#if editMode}
+    <div class="add-child-from">
+      <label for="name">meal name</label>
+      <input type="text" name="name" id="name" bind:value={meal.Name} />
+      <label for="MealType">MealType</label>
+      <select id="MealType" bind:value={meal.MealType}>
+        {#each mealTypeOptions as goption}
+          <option value={goption.id}>{goption.text}</option>
+        {/each}
+      </select>
+
+      <br />
+      <button on:click={submitUpdateMealForm}>Submit</button>
+    </div>
+  {:else}
+    <h1>{meal.Name}</h1>
+    <h3>{mealTypeToString(meal.Mealtype)}</h3>
+    <h4>Total Calories : {meal.Calories}</h4>
+    <h4>Number of Ingredients : {ingredients.length}</h4>
+    <h4>Number of Times eaten : {eatenMeals.length}</h4>
+  {/if}
+  <hr />
+  <ToggleIcon on:toggled={toggleEditIngredient} />
+{#if editIngredientMode}
   <div class="add-child-from">
     <label for="name">Ingredient name</label>
     <input type="text" name="name" id="name" bind:value={newIngredient.Name} />
@@ -121,23 +157,41 @@
     <br />
     <button on:click={submitAddIngredientForm}>Submit</button>
   </div>
-
+{/if}
   {#if ingredients.length > 0}
-    {#each ingredients as ingredient}
-      {ingredient.Name} {ingredient.Calories}
-      <button on:click={() => deleteIngredient(ingredient.ID)}>X</button>
-      <br />
-    {/each}
+    <Table headers={['Name', 'Calories', 'Action']}>
+
+      {#each ingredients as ingredient}
+        <tr>
+          <td>{ingredient.Name}</td>
+          <td>{ingredient.Calories}</td>
+          <td>
+            <button on:click={() => deleteIngredient(ingredient.ID)}>X</button>
+          </td>
+        </tr>
+      {/each}
+    </Table>
   {:else}
     <h1>Add ingredient</h1>
   {/if}
-  <hr>
+  <hr />
   {#if eatenMeals.length > 0}
-  {#each eatenMeals as eMeal}
-    Ate On: {eMeal.Date} <a href={`/#/eatenmeal/${eMeal.ID}`}>Go to Meal</a> <br>
-  {/each}
+     <Table headers={['Eaten Date', 'Link', 'Average Rating']}>
+    {#each eatenMeals as eMeal}
+     <tr>
+     <td>
+     {convertDateToString(eMeal.Date)}
+     </td>
+     <td>
+     <a href={`/#/eatenmeal/${eMeal.ID}`}>Go to Meal</a>
+     </td>
+     <td>{eMeal.AverageRating.toFixed(2)}</td>
+     </tr>
+ 
+    {/each}
+     </Table>
   {:else}
-  <h1>No eaten Meals</h1>
+    <h1>No eaten Meals</h1>
   {/if}
 {:else}
   <h1>Loading Meal</h1>

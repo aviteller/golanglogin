@@ -25,3 +25,28 @@ export const genderOptions = [
   { id: "Male", text: "Male" },
   { id: "Female", text: "Female" }
 ];
+
+export const convertDateToAge = (dateString, returnString = true) => {
+  if (!dateString) return 0;
+  let firstDate = new Date(dateString);
+  let diff = new Date(new Date() - firstDate);
+  if (returnString) {
+    return `${diff.toISOString().slice(0, 4) -
+      1970} years and ${diff.getMonth()} months`;
+  } else {
+    return diff;
+  }
+};
+
+export const convertDateToString = date => {
+  let options = {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  };
+
+  let dateThing = new Date(date);
+
+  return dateThing.toLocaleDateString("en-UK", options);
+};
