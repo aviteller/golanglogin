@@ -50,3 +50,5 @@ export const convertDateToString = date => {
 
   return dateThing.toLocaleDateString("en-UK", options);
 };
+
+export const waitFor = ms => new Promise(s => setTimeout(s, ms));

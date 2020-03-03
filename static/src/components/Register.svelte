@@ -38,9 +38,9 @@
 </script>
 
 <h1>Register</h1>
-<a href="#/Login">Login</a>
+<!-- <a href="#/Login">Login</a> -->
 
-<div class="auth-from">
+<form class="auth-from" on:submit|preventDefault>
   <div style="color:red">{errors}</div>
   <label for="name">Username</label>
   <input type="text" name="name" id="name" bind:value={user.name} />
@@ -53,4 +53,4 @@
     id="password"
     bind:value={user.password} />
   <button on:click={submitRegisterForm}>Submit</button>
-</div>
+</form>

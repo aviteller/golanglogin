@@ -71,9 +71,9 @@
 
 {#if userLoaded}
 
-  <h1>Hello {user.Name}</h1>
-  <button on:click={logout}>Logout</button>
-  <br />
+  <!-- <h1>Hello {user.Name}</h1> -->
+  <!-- <button on:click={logout}>Logout</button> -->
+  <!-- <br /> -->
   <button on:click={toggleMode}>Toggle View</button>
 
   {#if mode == 'AddChild'}

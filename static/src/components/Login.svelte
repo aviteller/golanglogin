@@ -1,6 +1,7 @@
 <script>
   import { push } from "svelte-spa-router";
   import config from "../config";
+  import { waitFor } from "../helpers";
   import Cookies from "../Cookies";
   let c = new Cookies();
   let user = {
@@ -35,18 +36,15 @@
 
           c.setCookie("jwt", JSON.stringify(userForCookie), 1);
         })
-        .then(res => {
-          console.log('res', res)
-          push("/");
-        });
+        .then(res => location.assign("/"));
     }
   };
 </script>
 
 <h1>Login</h1>
-<a href="#/Register">Register</a>
+<!-- <a href="#/Register">Register</a> -->
 
-<div class="auth-from">
+<form class="auth-from" on:submit|preventDefault>
   <div style="color:red">{errors}</div>
   <label for="name">Username</label>
   <input type="text" name="name" id="name" bind:value={user.name} />
@@ -57,4 +55,4 @@
     id="password"
     bind:value={user.password} />
   <button on:click={submitLoginForm}>Submit</button>
-</div>
+</form>
